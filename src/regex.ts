@@ -11,13 +11,20 @@ const protocol = `(ht{2}ps?:|ftps?:)\\/\\/`;
 const confirmedByProtocol = `(${protocol})\\S+\\b`;
 const fqdn = `(((${protocol})?(${domain}|${ipv4})(?=\\b|_)${port})|(?:${confirmedByProtocol}))`;
 
-
-
 export const email = `\\b(mailto:)?${emailAddress}@(${domain}|${ipv4})`;
 export const url = `(${fqdn})${path}?`;
 export const file = `(file:\\/\\/\\/)(?:[a-z]+:(?:\\/|\\\\)+)?([\\w.]+(?:[\\/\\\\]?)+)+`;
-export const final = `(?<=\\b|_)((${email})|(${file})|(${url}))(\\b)?`;
-export const finalRegex = new RegExp(final, "gi");
+
+// since safari doesn't like lookbehind, we're trying an alternative
+export const final1 = `(?<=\\b|_)((${email})|(${file})|(${url}))(\\b)?`;
+export const final2 = `((\\b)(${email})|(\\b)(${file})|(\\b)(${url}))(\\b)?`;
+
+export let finalRegex = new RegExp(final2, "gi");
+try {
+	finalRegex = new RegExp(final1, "gi");
+} catch (e) {
+	finalRegex = new RegExp(final2, "gi");
+}
 
 // for validation purposes
 export const ipRegex = new RegExp(`^(${ipv4}|${ipv6})$`, "i");
@@ -85,13 +92,13 @@ for (let i = 0; i < testers.length; i++) {
 	if (i === 5) {
 		iidxes.url.protocol[1] = result.lastIndexOf("http://");
 	}
-	if(i===6) {
-		iidxes.url.TLD[0] = result.indexOf("ta")
+	if (i ===6) {
+		iidxes.url.TLD[0] = result.indexOf("ta");
 	}
-	if(i===7) {
-		iidxes.url.TLD[1] = result.indexOf("cd")
+	if (i === 7) {
+		iidxes.url.TLD[1] = result.indexOf("cd");
 	}
-	if(i===8){
+	if (i === 8) {
 		iidxes.url.host[0] = result.lastIndexOf("www.github.com");
 	}
 	finalRegex.lastIndex = 0;
