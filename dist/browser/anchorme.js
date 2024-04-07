@@ -138,7 +138,7 @@
 
 	var regex = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.iidxes = exports.urlRegex = exports.fileRegex = exports.emailRegex = exports.ipRegex = exports.finalRegex = exports.final = exports.file = exports.url = exports.email = void 0;
+	exports.iidxes = exports.urlRegex = exports.fileRegex = exports.emailRegex = exports.ipRegex = exports.finalRegex = exports.final2 = exports.final1 = exports.file = exports.url = exports.email = void 0;
 
 	var emailAddress = "([\\w!#$%&'*+=?^`{|}~-]+(?:\\.[\\w!#$%&'*+=?^`{|}~-]+)*)";
 	var domain = "(?:(?:(?:[a-z\\d]|[a-z\\d][\\w\\-]*[a-z\\d]))\\.)+(xn--[a-z\\d]{2,}|[a-z]{2,})(?=[^.]|\\b)";
@@ -153,8 +153,16 @@
 	exports.email = "\\b(mailto:)?".concat(emailAddress, "@(").concat(domain, "|").concat(ipv4, ")");
 	exports.url = "(".concat(fqdn, ")").concat(path, "?");
 	exports.file = "(file:\\/\\/\\/)(?:[a-z]+:(?:\\/|\\\\)+)?([\\w.]+(?:[\\/\\\\]?)+)+";
-	exports.final = "(?<=\\b|_)((".concat(exports.email, ")|(").concat(exports.file, ")|(").concat(exports.url, "))(\\b)?");
-	exports.finalRegex = new RegExp(exports.final, "gi");
+	// since safari doesn't like lookbehind, we're trying an alternative
+	exports.final1 = "(?<=\\b|_)((".concat(exports.email, ")|(").concat(exports.file, ")|(").concat(exports.url, "))(\\b)?");
+	exports.final2 = "((\\b)(".concat(exports.email, ")|(\\b)(").concat(exports.file, ")|(\\b)(").concat(exports.url, "))(\\b)?");
+	exports.finalRegex = new RegExp(exports.final2, "gi");
+	try {
+	    exports.finalRegex = new RegExp(exports.final1, "gi");
+	}
+	catch (e) {
+	    exports.finalRegex = new RegExp(exports.final2, "gi");
+	}
 	// for validation purposes
 	exports.ipRegex = new RegExp("^(".concat(ipv4, "|").concat(ipv6, ")$"), "i");
 	exports.emailRegex = new RegExp("^(".concat(exports.email, ")$"), "i");
@@ -174,6 +182,8 @@
 	regex.emailRegex;
 	regex.ipRegex;
 	regex.finalRegex;
+	regex.final2;
+	regex.final1;
 	regex.file;
 	regex.url;
 	regex.email;

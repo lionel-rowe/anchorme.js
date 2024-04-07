@@ -1,8 +1,9 @@
 export declare const email: string;
 export declare const url: string;
 export declare const file = "(file:\\/\\/\\/)(?:[a-z]+:(?:\\/|\\\\)+)?([\\w.]+(?:[\\/\\\\]?)+)+";
-export declare const final: string;
-export declare const finalRegex: RegExp;
+export declare const final1: string;
+export declare const final2: string;
+export declare let finalRegex: RegExp;
 export declare const ipRegex: RegExp;
 export declare const emailRegex: RegExp;
 export declare const fileRegex: RegExp;
@@ -85,13 +86,13 @@ for (let i = 0; i < testers.length; i++) {
     if (i === 5) {
         iidxes.url.protocol[1] = result.lastIndexOf("http://");
     }
-    if(i===6) {
-        iidxes.url.TLD[0] = result.indexOf("ta")
+    if (i ===6) {
+        iidxes.url.TLD[0] = result.indexOf("ta");
     }
-    if(i===7) {
-        iidxes.url.TLD[1] = result.indexOf("cd")
+    if (i === 7) {
+        iidxes.url.TLD[1] = result.indexOf("cd");
     }
-    if(i===8){
+    if (i === 8) {
         iidxes.url.host[0] = result.lastIndexOf("www.github.com");
     }
     finalRegex.lastIndex = 0;

@@ -1,3 +1,4 @@
+/// <reference types="mocha" />
 import { transform } from "./transform";
 import { ListingProps, Options } from "./types";
 declare const anchorme: {
