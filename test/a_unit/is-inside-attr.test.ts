@@ -1,3 +1,4 @@
+/// <reference types="mocha" />
 import { isInsideAttribute } from "../../src/utils";
 import * as expect from "expect";
 

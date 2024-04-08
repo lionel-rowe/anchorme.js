@@ -1,3 +1,4 @@
+/// <reference types="mocha" />
 import { Options } from "../../dist/node/types";
 import { transform } from "../../src/transform";
 import * as expect from "expect";
