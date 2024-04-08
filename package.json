@@ -1,6 +1,6 @@
 {
 	"name": "anchorme",
-	"version": "3.0.6",
+	"version": "3.0.7",
 	"description": "A library to convert URLs to a clickable HTML anchor elements",
 	"main": "./dist/node/index.js",
 	"module": "./dist/browser/anchorme.js",
