@@ -17,7 +17,7 @@ listRemoteTLDs().then(list => {
 		path.resolve("src/tlds.ts"),
 		`export const TLDs = \`(${listWithLocalTLDs.join("|")})\`;`,
 		{
-			encoding: "UTF8"
+			encoding: "utf8"
 		}
 	);
 });
