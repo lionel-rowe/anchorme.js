@@ -5,7 +5,9 @@
 		"target": "ES5",
 		"declaration": true,
 		"strict": true,
-		"forceConsistentCasingInFileNames": true
+		"forceConsistentCasingInFileNames": true,
+		"lib": ["ES2015"],
+		"types": []
 	},
 	"files": ["./src/index.ts"],
 	"exclude": ["./node_modules/*"]
