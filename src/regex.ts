@@ -15,15 +15,21 @@ export const email = `\\b(mailto:)?${emailAddress}@(${domain}|${ipv4})`;
 export const url = `(${fqdn})${path}?`;
 export const file = `(file:\\/\\/\\/)(?:[a-z]+:(?:\\/|\\\\)+)?([\\w.]+(?:[\\/\\\\]?)+)+`;
 
-// since safari doesn't like lookbehind, we're trying an alternative
-export const final1 = `(?<=\\b|_)((${email})|(${file})|(${url}))(\\b)?`;
-export const final2 = `((\\b)(${email})|(\\b)(${file})|(\\b)(${url}))(\\b)?`;
+const common = `((${email})|(${file})|(${url}))(\\b)?`;
+// since safari doesn't like lookbehind, we're trying an alternative.
+// `final` must have same number of capture groups as `finalNoLookbehindCompatMode`:
+// - In non-compat-mode, the first group is always empty as it only contains a lookbehind
+// - In compat mode, we truncate whatever is in the first group (0 or 1 chars) as it's not part of the URL.
+export const final = `((?<=\\b|_))${common}`;
+export const finalNoLookbehindCompatMode = `(\\b|_)${common}`;
 
-export let finalRegex = new RegExp(final2, "gi");
+export let finalRegex = new RegExp(finalNoLookbehindCompatMode, "gi");
+export let NO_LOOKBEHIND_COMPAT_MODE = false;
 try {
-	finalRegex = new RegExp(final1, "gi");
+	finalRegex = new RegExp(final, "gi");
 } catch (e) {
-	finalRegex = new RegExp(final2, "gi");
+	finalRegex = new RegExp(finalNoLookbehindCompatMode, "gi");
+	NO_LOOKBEHIND_COMPAT_MODE = true;
 }
 
 // for validation purposes
@@ -35,7 +41,7 @@ export const urlRegex = new RegExp(`^(${url})$`, "i");
 // identifying parts of the link
 // the initial value of this object is precomputed.
 // https://github.com/alexcorvi/anchorme.js/blob/098843bc0d042601cff592c4f8c9f6d0424c09cd/src/regex.ts
-const iidxes = {"isFile":8,"file":{"fileName":10,"protocol":9},"isEmail":2,"email":{"protocol":3,"local":4,"host":5},"isURL":11,"url":{"TLD":[18,6],"protocol":[15,22],"host":[17],"ipv4":19,"byProtocol":13,"port":21,"protocolWithDomain":12,"path":24}};
+const iidxes = {"isFile":9,"file":{"fileName":11,"protocol":10},"isEmail":3,"email":{"protocol":4,"local":5,"host":6},"isURL":12,"url":{"TLD":[19,7],"protocol":[16,23],"host":[18],"ipv4":20,"byProtocol":14,"port":22,"protocolWithDomain":13,"path":25}};
 
 
 /***

@@ -1,40 +1,47 @@
 export interface BaseTokenProps {
 	start: number;
 	end: number;
-	reason: string;
 	string: string;
 }
 
 export interface Email extends BaseTokenProps {
+	reason: 'email';
 	isEmail: true;
-	protocol: string;
+	isURL?: false;
+	isFile?: false;
+	protocol?: string;
 	local: string;
 	host: string;
 }
 
 export interface URL extends BaseTokenProps {
+	reason: 'url';
 	isURL: true;
-	protocol: string;
-	host: string;
-	port: string;
-	ipv4: string;
-	ipv6: string;
+	isEmail?: false;
+	isFile?: false;
+	protocol?: string;
+	host?: string;
+	port?: string;
+	ipv4?: string;
+	ipv6?: string;
 	confirmedByProtocol: boolean;
-	path: string;
-	query: string;
-	fragment: string;
+	path?: string;
+	query?: string;
+	fragment?: string;
 }
 
 export interface File extends BaseTokenProps {
+	reason: 'file';
 	isFile: true;
-	filename: string;
+	isURL?: false;
+	isEmail?: false;
+	protocol: string;
+	filename?: string;
 	filePath: string;
-	fileDirectory: string;
+	fileDirectory?: string;
 }
 
-type TokenProps = Email & File & URL;
-
-export type ListingProps = Partial<TokenProps> & BaseTokenProps;
+export type ListingProps = Email | File | URL;
 
 export type DesiredValues =
 	| { [key: string]: string | undefined | true }

@@ -8,6 +8,7 @@ import {
 	ipRegex,
 	urlRegex,
 	iidxes,
+	NO_LOOKBEHIND_COMPAT_MODE,
 } from "./regex";
 import {
 	checkParenthesis as parenthesisIsPartOfTheURL,
@@ -25,6 +26,11 @@ const list = function (input: string, skipHTML:boolean=true) {
 
 	while ((result = finalRegex.exec(input)) !== null) {
 		const start = result.index;
+		if (NO_LOOKBEHIND_COMPAT_MODE) {
+			const discard = result[1].length;
+			result.index -= discard;
+			result[0] = result[0].slice(discard);
+		}
 		let end = start + result[0].length;
 		let string = result[0];
 
@@ -152,12 +158,7 @@ const list = function (input: string, skipHTML:boolean=true) {
 				reason: "email",
 			});
 		} else {
-			found.push({
-				start,
-				end,
-				string,
-				reason: "unknown",
-			});
+			throw new Error('Unreachable');
 		}
 	}
 	return found;
