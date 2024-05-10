@@ -7,7 +7,6 @@
 	"types": "./dist/node/index.d.ts",
 	"scripts": {
 		"test": "mocha",
-		"test-no-lookbehind": "SIMULATE_NO_LOOKBEHIND=1 mocha",
 		"testw": "mocha -w",
 		"build": "ts-node ./build/build.ts",
 		"buildw": "ts-node ./build/build.ts -w",

@@ -1,24 +1,14 @@
-// @ts-ignore
-const { SIMULATE_NO_LOOKBEHIND } = process.env;
+const OriginalRegExp = globalThis.RegExp;
 
-if (SIMULATE_NO_LOOKBEHIND) {
-	const OriginalRegExp = globalThis.RegExp;
-
-	class MockRegExp extends OriginalRegExp {
-		constructor(pattern: string | RegExp, flags?: string) {
-			super(pattern, flags)
-			if (String(pattern).includes('(?<=')) {
-				throw new SyntaxError('idk what (?<= even means')
-			}
+// Mock RegExp constructor used in tests to ensure regexes contain no lookbehind syntax
+class SafariRegExp extends OriginalRegExp {
+	constructor(pattern: string | RegExp, flags?: string) {
+		super(pattern, flags);
+		if (String(pattern).includes("(?<=")) {
+			throw new SyntaxError("Lookbehind syntax (?<=...) is disallowed to support legacy Safari");
 		}
 	}
-
-	// @ts-ignore
-	globalThis.RegExp = MockRegExp;
 }
 
-import { NO_LOOKBEHIND_COMPAT_MODE } from '../src/regex';
-
-if (NO_LOOKBEHIND_COMPAT_MODE !== Boolean(SIMULATE_NO_LOOKBEHIND)) {
-	throw new Error('Failed to set `NO_LOOKBEHIND_COMPAT_MODE` correctly.');
-}
+// @ts-ignore
+globalThis.RegExp = SafariRegExp;

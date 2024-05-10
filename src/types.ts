@@ -5,7 +5,7 @@ export interface BaseTokenProps {
 }
 
 export interface Email extends BaseTokenProps {
-	reason: 'email';
+	reason: "email";
 	isEmail: true;
 	isURL?: false;
 	isFile?: false;
@@ -15,7 +15,7 @@ export interface Email extends BaseTokenProps {
 }
 
 export interface URL extends BaseTokenProps {
-	reason: 'url';
+	reason: "url";
 	isURL: true;
 	isEmail?: false;
 	isFile?: false;
@@ -31,7 +31,7 @@ export interface URL extends BaseTokenProps {
 }
 
 export interface File extends BaseTokenProps {
-	reason: 'file';
+	reason: "file";
 	isFile: true;
 	isURL?: false;
 	isEmail?: false;

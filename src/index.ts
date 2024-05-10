@@ -8,7 +8,6 @@ import {
 	ipRegex,
 	urlRegex,
 	iidxes,
-	NO_LOOKBEHIND_COMPAT_MODE,
 } from "./regex";
 import {
 	checkParenthesis as parenthesisIsPartOfTheURL,
@@ -26,11 +25,15 @@ const list = function (input: string, skipHTML:boolean=true) {
 
 	while ((result = finalRegex.exec(input)) !== null) {
 		const start = result.index;
-		if (NO_LOOKBEHIND_COMPAT_MODE) {
-			const discard = result[1].length;
-			result.index -= discard;
-			result[0] = result[0].slice(discard);
+
+		// To support environments without lookbehind, we use a normal capture
+		// group to check for presence of "_", then truncate it if it exists as
+		// it's not part of the URL.
+		if (result[1]) {
+			result.index -= result[1].length;
+			result[0] = result[0].slice(result[1].length);
 		}
+
 		let end = start + result[0].length;
 		let string = result[0];
 
@@ -158,7 +161,7 @@ const list = function (input: string, skipHTML:boolean=true) {
 				reason: "email",
 			});
 		} else {
-			throw new Error('Unreachable');
+			throw new Error("Unreachable");
 		}
 	}
 	return found;

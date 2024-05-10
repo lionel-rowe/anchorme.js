@@ -15,22 +15,11 @@ export const email = `\\b(mailto:)?${emailAddress}@(${domain}|${ipv4})`;
 export const url = `(${fqdn})${path}?`;
 export const file = `(file:\\/\\/\\/)(?:[a-z]+:(?:\\/|\\\\)+)?([\\w.]+(?:[\\/\\\\]?)+)+`;
 
-const common = `((${email})|(${file})|(${url}))(\\b)?`;
-// since safari doesn't like lookbehind, we're trying an alternative.
-// `final` must have same number of capture groups as `finalNoLookbehindCompatMode`:
-// - In non-compat-mode, the first group is always empty as it only contains a lookbehind
-// - In compat mode, we truncate whatever is in the first group (0 or 1 chars) as it's not part of the URL.
-export const final = `((?<=\\b|_))${common}`;
-export const finalNoLookbehindCompatMode = `(\\b|_)${common}`;
-
-export let finalRegex = new RegExp(finalNoLookbehindCompatMode, "gi");
-export let NO_LOOKBEHIND_COMPAT_MODE = false;
-try {
-	finalRegex = new RegExp(final, "gi");
-} catch (e) {
-	finalRegex = new RegExp(finalNoLookbehindCompatMode, "gi");
-	NO_LOOKBEHIND_COMPAT_MODE = true;
-}
+// Since Safari doesn't like lookbehind, we're trying an alternative.
+// Upon matching, we truncate whatever is in the very first capture group
+// ("" or "_") as it's not part of the URL.
+export const final = `(\\b|_)((${email})|(${file})|(${url}))(\\b)?`;
+export const finalRegex = new RegExp(final, "gi");
 
 // for validation purposes
 export const ipRegex = new RegExp(`^(${ipv4}|${ipv6})$`, "i");
