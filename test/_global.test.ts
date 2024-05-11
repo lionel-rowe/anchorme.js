@@ -4,8 +4,9 @@ const OriginalRegExp = globalThis.RegExp;
 class SafariRegExp extends OriginalRegExp {
 	constructor(pattern: string | RegExp, flags?: string) {
 		super(pattern, flags);
-		if (String(pattern).includes("(?<=")) {
-			throw new SyntaxError("Lookbehind syntax (?<=...) is disallowed to support legacy Safari");
+		pattern = String(pattern)
+		if (pattern.includes("(?<=") || pattern.includes("(?<!")) {
+			throw new SyntaxError("Lookbehind syntax (?<=...) and (?<!...) is disallowed to support legacy Safari");
 		}
 	}
 }
