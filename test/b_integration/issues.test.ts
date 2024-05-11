@@ -68,4 +68,36 @@ describe("Issues", () => {
 			`What's the best way to clean your smartphone? 📱🚿<a href="https://t.co/cxjsA6j60J">https://t.co/cxjsA6j60J</a>`
 		);
 	});
+	
+	describe("Catastrophic backtracking - https://github.com/alexcorvi/anchorme.js/issues/115 and https://github.com/alexcorvi/anchorme.js/issues/82", () => {
+		const MAX_MILLISECONDS_PER_VALIDATION = 10;
+
+		const examplesFromIssues = [
+			'https://respond.vitally.io/work/team/users/6e92f9e7-2204-478c-9a7f-965bdd54dd0e@',
+			'https://pages.getpostman.com/rs/067-UMD-991/images/ban-api-builder (1).jpg',
+			'https://en.wikipedia.org/wiki/Robert_Cranston_(Scottish_politician)',
+			'https://en.wikipedia.org/wiki/Robert_Cranston(abcdefg)',
+			'https://en.wikipedia.org/wiki/Robert_Cranston(a)',
+		];
+
+		for (const example of examplesFromIssues) {
+			it(example, () => {
+				const start = Date.now();
+				anchorme.validate.url(example);
+				expect(Date.now() - start).toBeLessThan(MAX_MILLISECONDS_PER_VALIDATION);
+			});
+		}
+
+		it('very long path "aaaaaa..."', () => {
+			const start = Date.now();
+			anchorme.validate.url(`https://example.com/${'a'.repeat(1000)}@`);
+			expect(Date.now() - start).toBeLessThan(MAX_MILLISECONDS_PER_VALIDATION);
+		});
+
+		it('very long path "@a@a@a@a@a@a..."', () => {
+			const start = Date.now();
+			anchorme.validate.url(`https://example.com/${'@a'.repeat(1000)}@`);
+			expect(Date.now() - start).toBeLessThan(MAX_MILLISECONDS_PER_VALIDATION);
+		});
+	});
 });
