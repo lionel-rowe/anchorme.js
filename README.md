@@ -10,6 +10,20 @@
 
 Tiny, fast, efficient, feature rich Javascript library to detect links / URLs / Emails in text and convert them to clickable HTML anchor links.
 
+> **⚠️ Warning**
+>
+> Output is not guaranteed to be [XSS](https://en.wikipedia.org/wiki/Cross-site_scripting)-safe. If you call `anchorme` on untrusted user input, make sure to properly sanitize the output immediately before rendering, using a well-tested library such as [DOMPurify](https://github.com/cure53/DOMPurify). For example:
+>
+> ```js
+> el.innerHTML = DOMPurify.sanitize(anchorme(userInput)); // ✅ safe, assuming DOMPurify is correctly configured for your use case and threat model
+> el.textContent = anchorme.list(userInput).map((x) => x.string).join(', '); // ✅ safe, as we're only setting text, not rendering HTML
+> el.innerHTML = anchorme(TRUSTED_CONTENT_FROM_CMS); // ✅ safe, as we trust the input
+>
+> el.innerHTML = anchorme(userInput); // 🚨 unsafe
+> el.innerHTML = anchorme(DOMPurify.sanitize(userInput)); // 🚨 unsafe, as sanitization must be performed on output, not input
+> el.innerHTML = anchorme.list(userInput).map((x) => x.string).join(', '); // 🚨 unsafe, as we're still setting innerHTML
+> ```
+
 ## Main features
 
 -   **Sensitivity**:
