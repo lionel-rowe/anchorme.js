@@ -1,3 +1,4 @@
+/// <reference types="mocha" />
 import anchorme from "../../dist/node/index";
 import * as expect from "expect";
 describe("Issues", () => {
@@ -57,7 +58,11 @@ describe("Issues", () => {
 		const res = anchorme.list(
 			`http://localhost localhost http://local http://machine`
 		);
-		expect(res.length).toBe(3);
+		expect(res.map((x) => x.string)).toStrictEqual([
+			'http://localhost',
+			'http://local',
+			'http://machine',
+		]);
 	});
 
 	it("Link after emoji", () => {
@@ -67,5 +72,57 @@ describe("Issues", () => {
 		expect(res).toBe(
 			`What's the best way to clean your smartphone? 📱🚿<a href="https://t.co/cxjsA6j60J">https://t.co/cxjsA6j60J</a>`
 		);
+	});
+
+	describe("localhost with port - https://github.com/alexcorvi/anchorme.js/issues/119", () => {
+		it("localhost with port", () => {
+			const res = anchorme.list(`
+				http://localhost:80
+				http://local:6666/
+				https://localhost:443/a/b?c=d"
+			`);
+
+			expect(res.map((x) => x.string)).toStrictEqual([
+				'http://localhost:80',
+				'http://local:6666/',
+				'https://localhost:443/a/b?c=d',
+			]);
+		});
+
+		describe("within HTML attributes", () => {
+			const input = `
+				<a href="http://localhost:80"></a>
+				<a href="http://local:6666/"></a>
+				<a href="https://localhost:443/a/b?c=d"></a>
+
+				<a href='http://localhost:80'></a>
+				<a href='http://local:6666/'></a>
+				<a href='https://localhost:443/a/b?c=d'></a>
+
+				<a href=http://localhost:80></a>
+				<a href=http://local:6666/></a>
+				<a href=https://localhost:443/a/b?c=d></a>
+			`;
+
+			it('no results with skipHTML=true', () => {
+				const res = anchorme.list(input, true);
+				expect(res.map((x) => x.string)).toStrictEqual([]);
+			});
+
+			it('only the attribute values with skipHTML=false', () => {
+				const res = anchorme.list(input, false);
+				expect(res.map((x) => x.string)).toStrictEqual([
+					'http://localhost:80',
+					'http://local:6666/',
+					'https://localhost:443/a/b?c=d',
+					'http://localhost:80',
+					'http://local:6666/',
+					'https://localhost:443/a/b?c=d',
+					'http://localhost:80',
+					'http://local:6666/',
+					'https://localhost:443/a/b?c=d',
+				]);
+			});
+		});
 	});
 });

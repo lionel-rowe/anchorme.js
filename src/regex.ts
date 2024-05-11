@@ -8,7 +8,7 @@ const ipv4 = `((?:(?:25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(?:25[0-5]|2[0-4]\\d|
 const ipv6 = `\\[(?:(?:[a-f\\d:]+:+)+[a-f\\d]+)\\]`;
 const port = `(:(\\d{1,5}))?`;
 const protocol = `(ht{2}ps?:|ftps?:)\\/\\/`;
-const confirmedByProtocol = `(${protocol})\\S+\\b`;
+const confirmedByProtocol = `(${protocol})[^'"<>&\\s]+\\b`;
 const fqdn = `(((${protocol})?(${domain}|${ipv4})(?=\\b|_)${port})|(?:${confirmedByProtocol}))`;
 
 export const email = `\\b(mailto:)?${emailAddress}@(${domain}|${ipv4})`;
