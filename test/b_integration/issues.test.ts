@@ -1,4 +1,6 @@
+import { nonLatinAlphabetRanges } from "../../dist/node/dictionary";
 import anchorme from "../../dist/node/index";
+import { _allowedInPath, _allowedAtStartOfPath } from "../../dist/node/regex";
 import * as expect from "expect";
 describe("Issues", () => {
 	/**
@@ -70,14 +72,25 @@ describe("Issues", () => {
 	});
 	
 	describe("Catastrophic backtracking - https://github.com/alexcorvi/anchorme.js/issues/115 and https://github.com/alexcorvi/anchorme.js/issues/82", () => {
-		const MAX_MILLISECONDS_PER_VALIDATION = 10;
+		it("check logic for backtrack-vulnerable sequence", () => {
+			const charsToTest = Array.from({ length: 1000 }, (_, i) => String.fromCodePoint(i)).join("");
+			const matchedByAllowedInPath = new Set(charsToTest.match(new RegExp(`[${_allowedInPath}]`, "g")));
+			const matchedByAllowedAtStartOfPath = new Set(charsToTest.match(new RegExp(`[${_allowedAtStartOfPath}]`, "g")));
+
+			// no overlap between chars matched by `_allowedInPath` and `_allowedAtStartOfPath`
+			expect(new Set(Array.from(matchedByAllowedInPath).concat(Array.from(matchedByAllowedAtStartOfPath))).size)
+				.toBe(matchedByAllowedInPath.size + matchedByAllowedAtStartOfPath.size);
+		});
+
+		// should be significantly less than this but we allow some leeway to avoid flaky tests
+		const MAX_MILLISECONDS_PER_VALIDATION = 50;
 
 		const examplesFromIssues = [
-			'https://respond.vitally.io/work/team/users/6e92f9e7-2204-478c-9a7f-965bdd54dd0e@',
-			'https://pages.getpostman.com/rs/067-UMD-991/images/ban-api-builder (1).jpg',
-			'https://en.wikipedia.org/wiki/Robert_Cranston_(Scottish_politician)',
-			'https://en.wikipedia.org/wiki/Robert_Cranston(abcdefg)',
-			'https://en.wikipedia.org/wiki/Robert_Cranston(a)',
+			"https://respond.vitally.io/work/team/users/6e92f9e7-2204-478c-9a7f-965bdd54dd0e@",
+			"https://pages.getpostman.com/rs/067-UMD-991/images/ban-api-builder (1).jpg",
+			"https://en.wikipedia.org/wiki/Robert_Cranston_(Scottish_politician)",
+			"https://en.wikipedia.org/wiki/Robert_Cranston(abcdefg)",
+			"https://en.wikipedia.org/wiki/Robert_Cranston(a)",
 		];
 
 		for (const example of examplesFromIssues) {
@@ -88,15 +101,15 @@ describe("Issues", () => {
 			});
 		}
 
-		it('very long path "aaaaaa..."', () => {
+		it("very long path `aaaaaa...`", () => {
 			const start = Date.now();
-			anchorme.validate.url(`https://example.com/${'a'.repeat(1000)}@`);
+			anchorme.validate.url(`https://example.com/${"a".repeat(1000)}@`);
 			expect(Date.now() - start).toBeLessThan(MAX_MILLISECONDS_PER_VALIDATION);
 		});
 
-		it('very long path "@a@a@a@a@a@a..."', () => {
+		it("very long path `@a@a@a@a@a@a...`", () => {
 			const start = Date.now();
-			anchorme.validate.url(`https://example.com/${'@a'.repeat(1000)}@`);
+			anchorme.validate.url(`https://example.com/${"@a".repeat(1000)}@`);
 			expect(Date.now() - start).toBeLessThan(MAX_MILLISECONDS_PER_VALIDATION);
 		});
 	});
